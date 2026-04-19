@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { useState } from 'react'
-import { FaPhone, FaEnvelope, FaGithub, FaLinkedin } from 'react-icons/fa'
+import { FaPhone, FaEnvelope, FaGithub, FaLinkedin, FaFileDownload } from 'react-icons/fa'
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -90,6 +90,24 @@ export default function Contact() {
                 )
               })}
             </div>
+
+            {/* Resume Download */}
+            <motion.div
+              whileHover={{ x: 10 }}
+              className="glow-box p-4 rounded-lg"
+            >
+              <a
+                href="/cv.pdf"
+                download
+                className="flex gap-4 items-center text-neon-blue hover:text-neon-purple transition-colors"
+              >
+                <FaFileDownload className="text-2xl" />
+                <div>
+                  <h4 className="font-bold">Download Resume</h4>
+                  <p className="text-gray-400">Get my CV in PDF format</p>
+                </div>
+              </a>
+            </motion.div>
 
             <div className="mt-12">
               <h3 className="text-2xl font-bold mb-6 text-neon-purple">Scan to Connect</h3>
