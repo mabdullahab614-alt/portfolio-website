@@ -9,28 +9,28 @@ export default function Projects() {
       title: 'Nexus AI Assistant',
       description: 'An intelligent AI assistant built with Hugging Face Spaces, capable of handling various queries and providing helpful responses using advanced natural language processing.',
       tags: ['AI', 'Hugging Face', 'Gradio', 'NLP'],
-      github: '#',
+      github: 'https://github.com/mabdullahab614-alt/nexus-ai-assistant',
       live: 'https://huggingface.co/spaces/BUDDDY2894830/nexus-ai-assistant',
     },
     {
       title: 'Skin Disease Detector',
       description: 'A machine learning model for detecting skin diseases from uploaded images, using computer vision and deep learning techniques for medical assistance.',
       tags: ['AI', 'Computer Vision', 'Medical', 'Hugging Face'],
-      github: '#',
+      github: 'https://github.com/mabdullahab614-alt/skin-disease-detector',
       live: 'https://huggingface.co/spaces/BUDDDY2894830/skin-disease-detector',
     },
     {
       title: 'Animal Detector',
       description: 'An image classification tool that identifies different animal species from photos, powered by advanced AI models and deployed on Hugging Face Spaces.',
       tags: ['AI', 'Image Classification', 'Animals', 'Hugging Face'],
-      github: '#',
+      github: 'https://github.com/mabdullahab614-alt/animal-detector',
       live: 'https://huggingface.co/spaces/BUDDDY2894830/animal-detector',
     },
     {
       title: 'Brain Tumor Detector',
       description: 'A medical AI application for detecting brain tumors in MRI scans, assisting in early diagnosis and medical analysis using deep learning.',
       tags: ['AI', 'Medical Imaging', 'Brain Tumor', 'Hugging Face'],
-      github: '#',
+      github: 'https://github.com/mabdullahab614-alt/brain-tumor-detector',
       live: 'https://huggingface.co/spaces/Abdullah2894830/brain-tumor-detector',
     },
   ]
@@ -123,3 +123,5 @@ export default function Projects() {
     </section>
   )
 }
+
+
