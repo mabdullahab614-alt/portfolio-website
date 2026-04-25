@@ -9,6 +9,7 @@ const ICONS: Record<string, string> = {
   'Skin Disease Detector': '🔬',
   'Animal Detector': '🐾',
   'Brain Tumor Detector': '🧠',
+  'Galactic Defender Absolute Zero': '🎮',
 }
 
 const TAG_COLORS: Record<string, string> = {
@@ -22,6 +23,9 @@ const TAG_COLORS: Record<string, string> = {
   'Animals': 'rgba(0,255,136,0.15)',
   'Medical Imaging': 'rgba(255,0,110,0.15)',
   'Brain Tumor': 'rgba(157,78,221,0.15)',
+  'Game Dev': 'rgba(0,217,255,0.15)',
+  'Space Shooter': 'rgba(157,78,221,0.15)',
+  'Action': 'rgba(255,0,110,0.15)',
 }
 
 const TAG_TEXT: Record<string, string> = {
@@ -35,6 +39,9 @@ const TAG_TEXT: Record<string, string> = {
   'Animals': '#00ff88',
   'Medical Imaging': '#ff006e',
   'Brain Tumor': '#9d4edd',
+  'Game Dev': '#00d9ff',
+  'Space Shooter': '#9d4edd',
+  'Action': '#ff006e',
 }
 
 function ProjectCard({ project, index }: { project: any; index: number }) {
@@ -230,7 +237,14 @@ export default function Projects() {
       description: 'A medical AI application for detecting brain tumors in MRI scans, assisting in early diagnosis and medical analysis using deep learning.',
       tags: ['AI', 'Medical Imaging', 'Brain Tumor', 'Hugging Face'],
       github: 'https://github.com/mabdullahab614-alt/brain-tumor-detector',
-      live: 'https://huggingface.co/spaces/Abdullah2894830/brain-tumor-detector',
+      live: 'https://huggingface.co/spaces/BUDDDY2894830/brain-tumor-detector',
+    },
+    {
+      title: 'Galactic Defender Absolute Zero',
+      description: 'An action-packed space shooter game where you defend the galaxy from incoming threats. Playable directly in your browser on itch.io.',
+      tags: ['Game Dev', 'Space Shooter', 'Action'],
+      github: 'https://github.com/mabdullahab614-alt/galactic-defender-absolute-zero',
+      live: 'https://aabdullah2894830.itch.io/galactic-defender-absolute-zero',
     },
   ]
 
