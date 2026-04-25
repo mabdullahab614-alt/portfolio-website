@@ -1,6 +1,6 @@
 'use client'
 
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
+import { motion, useMotionValue, useSpring, useTransform, useMotionTemplate } from 'framer-motion'
 import { FaGithub, FaExternalLinkAlt } from 'react-icons/fa'
 import { useRef } from 'react'
 
@@ -9,7 +9,8 @@ const ICONS: Record<string, string> = {
   'Skin Disease Detector': '🔬',
   'Animal Detector': '🐾',
   'Brain Tumor Detector': '🧠',
-  'Galactic Defender Absolute Zero': '🎮',
+  'Galactic Defender: Absolute Zero': '🎮',
+  'Tablet Defect Inspector': '💊',
 }
 
 const TAG_COLORS: Record<string, string> = {
@@ -54,6 +55,11 @@ function ProjectCard({ project, index }: { project: any; index: number }) {
   const rotateY = useTransform(springX, [-0.5, 0.5], [-8, 8])
   const glowX = useTransform(springX, [-0.5, 0.5], [0, 100])
   const glowY = useTransform(springY, [-0.5, 0.5], [0, 100])
+  
+  const colors = ['#00d9ff', '#9d4edd', '#ff006e', '#00ff88']
+  const color = colors[index % colors.length]
+
+  const spotlightBackground = useMotionTemplate`radial-gradient(circle at ${glowX}% ${glowY}%, ${color}08 0%, transparent 60%)`
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = ref.current?.getBoundingClientRect()
@@ -62,9 +68,6 @@ function ProjectCard({ project, index }: { project: any; index: number }) {
     y.set((e.clientY - rect.top) / rect.height - 0.5)
   }
   const handleMouseLeave = () => { x.set(0); y.set(0) }
-
-  const colors = ['#00d9ff', '#9d4edd', '#ff006e', '#00ff88']
-  const color = colors[index % colors.length]
 
   return (
     <motion.div
@@ -110,7 +113,7 @@ function ProjectCard({ project, index }: { project: any; index: number }) {
         <motion.div
           className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-300"
           style={{
-            background: `radial-gradient(circle at ${glowX}% ${glowY}%, ${color}08 0%, transparent 60%)`,
+            background: spotlightBackground,
           }}
         />
 
@@ -240,11 +243,18 @@ export default function Projects() {
       live: 'https://huggingface.co/spaces/BUDDDY2894830/brain-tumor-detector',
     },
     {
-      title: 'Galactic Defender Absolute Zero',
+      title: 'Galactic Defender: Absolute Zero',
       description: 'An action-packed space shooter game where you defend the galaxy from incoming threats. Playable directly in your browser on itch.io.',
       tags: ['Game Dev', 'Space Shooter', 'Action'],
       github: 'https://github.com/mabdullahab614-alt/galactic-defender-absolute-zero',
       live: 'https://aabdullah2894830.itch.io/galactic-defender-absolute-zero',
+    },
+    {
+      title: 'Tablet Defect Inspector',
+      description: 'An AI-powered computer vision tool to identify structural defects in medical tablets, assisting in quality control and manufacturing.',
+      tags: ['AI', 'Computer Vision', 'Medical', 'Hugging Face'],
+      github: 'https://github.com/mabdullahab614-alt/tablet-defect-inspector',
+      live: 'https://huggingface.co/spaces/BUDDDY2894830/tablet-defect-inspector',
     },
   ]
 
