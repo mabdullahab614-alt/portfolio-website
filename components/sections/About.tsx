@@ -1,141 +1,116 @@
 'use client'
 
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
-import { useRef } from 'react'
+import { motion, useInView } from 'framer-motion'
+import { useRef, useEffect, useState } from 'react'
 
-const FLOAT_STATS = [
-  { label: 'UMT — BS AI', sub: '2025 → Present', color: '#00d9ff', x: '-55%', y: '-30%' },
-  { label: '20+ Platforms', sub: 'Globally Deployed', color: '#9d4edd', x: '55%', y: '-20%' },
-  { label: '92.2% Accuracy', sub: 'Brain Tumor Model', color: '#00ff88', x: '-50%', y: '55%' },
-  { label: '10+ Projects', sub: 'Live in Production', color: '#ff006e', x: '50%', y: '50%' },
+const TERMINAL_LINES = [
+  { text: '$ python train.py --model resnet18 --epochs 50', color: '#00d9ff', delay: 0 },
+  { text: 'Loading 7,200 MRI scans...', color: '#6b7280', delay: 600 },
+  { text: 'Epoch 48/50 | loss: 0.142 | val_acc: 91.4%', color: '#6b7280', delay: 1200 },
+  { text: 'Epoch 49/50 | loss: 0.118 | val_acc: 92.1%', color: '#6b7280', delay: 1800 },
+  { text: '✓ Epoch 50/50 | val_acc: 92.2% ← Best!', color: '#00ff88', delay: 2400 },
+  { text: 'Saving checkpoint: brain_tumor_v3.pth', color: '#6b7280', delay: 3000 },
+  { text: '$ gradio deploy --hf-token ***', color: '#00d9ff', delay: 3800 },
+  { text: 'Uploading model to Hugging Face...', color: '#6b7280', delay: 4400 },
+  { text: '✓ Live → hf.co/spaces/BUDDDY2894830/brain-tumor-detector', color: '#00ff88', delay: 5000 },
+  { text: '$ git push origin main', color: '#00d9ff', delay: 5800 },
+  { text: '✓ Vercel deployed in 58s → portfolio live', color: '#00ff88', delay: 6400 },
+  { text: '█', color: '#00d9ff', delay: 7000 },
 ]
 
-function HolographicCard() {
-  const ref = useRef<HTMLDivElement>(null)
-  const x = useMotionValue(0)
-  const y = useMotionValue(0)
-  const sx = useSpring(x, { stiffness: 120, damping: 18 })
-  const sy = useSpring(y, { stiffness: 120, damping: 18 })
-  const rx = useTransform(sy, [-0.5, 0.5], [18, -18])
-  const ry = useTransform(sx, [-0.5, 0.5], [-18, 18])
-  const glowX = useTransform(sx, [-0.5, 0.5], [0, 100])
-  const glowY = useTransform(sy, [-0.5, 0.5], [0, 100])
+function TerminalLine({ line, startTyping }: { line: typeof TERMINAL_LINES[0]; startTyping: boolean }) {
+  const [displayed, setDisplayed] = useState('')
+  const [done, setDone] = useState(false)
+
+  useEffect(() => {
+    if (!startTyping) return
+    const timer = setTimeout(() => {
+      if (line.text === '█') { setDisplayed('█'); setDone(true); return }
+      let i = 0
+      const speed = line.text.startsWith('$') ? 40 : 18
+      const interval = setInterval(() => {
+        i++
+        setDisplayed(line.text.slice(0, i))
+        if (i >= line.text.length) { clearInterval(interval); setDone(true) }
+      }, speed)
+      return () => clearInterval(interval)
+    }, line.delay)
+    return () => clearTimeout(timer)
+  }, [startTyping, line])
+
+  if (!displayed) return null
 
   return (
-    <div className="relative flex items-center justify-center" style={{ minHeight: 380 }}>
-      {/* Floating stat badges */}
-      {FLOAT_STATS.map((stat, i) => (
-        <motion.div
-          key={i}
-          className="absolute z-20 px-3 py-2 rounded-xl text-center pointer-events-none"
-          style={{
-            left: '50%', top: '50%',
-            transform: `translate(${stat.x}, ${stat.y})`,
-            background: `linear-gradient(135deg, ${stat.color}18, ${stat.color}06)`,
-            border: `1px solid ${stat.color}35`,
-            backdropFilter: 'blur(8px)',
-          }}
-          initial={{ opacity: 0, scale: 0.5 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          transition={{ delay: i * 0.15 + 0.4, type: 'spring', stiffness: 200 }}
-          animate={{ y: [0, -6, 0] }}
-        >
-          <div className="text-sm font-bold font-mono whitespace-nowrap" style={{ color: stat.color }}>{stat.label}</div>
-          <div className="text-xs text-gray-500 whitespace-nowrap">{stat.sub}</div>
-        </motion.div>
-      ))}
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="font-mono text-xs leading-5 whitespace-nowrap overflow-hidden"
+      style={{ color: line.color }}
+    >
+      {line.text === '█' ? (
+        <motion.span animate={{ opacity: [1, 0, 1] }} transition={{ duration: 0.8, repeat: Infinity }}>
+          █
+        </motion.span>
+      ) : displayed}
+    </motion.div>
+  )
+}
 
-      {/* Main 3D Card */}
-      <motion.div
-        ref={ref}
-        style={{
-          rotateX: rx, rotateY: ry, transformStyle: 'preserve-3d', perspective: 1000,
-          background: 'linear-gradient(135deg, rgba(0,217,255,0.12), rgba(157,78,221,0.08))',
-          border: '1px solid rgba(0,217,255,0.25)',
-          boxShadow: '0 25px 80px rgba(0,0,0,0.5), 0 0 60px rgba(0,217,255,0.1)',
-        }}
-        onMouseMove={e => {
-          const r = ref.current?.getBoundingClientRect()
-          if (!r) return
-          x.set((e.clientX - r.left) / r.width - 0.5)
-          y.set((e.clientY - r.top) / r.height - 0.5)
-        }}
-        onMouseLeave={() => { x.set(0); y.set(0) }}
-        className="relative w-56 h-56 rounded-2xl cursor-pointer"
-      >
-        {/* Spotlight */}
+function LiveTerminal() {
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true })
+  const [started, setStarted] = useState(false)
+
+  useEffect(() => {
+    if (inView) setTimeout(() => setStarted(true), 400)
+  }, [inView])
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 30 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.7 }}
+      className="relative rounded-xl overflow-hidden"
+      style={{
+        background: 'linear-gradient(135deg, rgba(6,9,20,0.98), rgba(10,14,39,0.95))',
+        border: '1px solid rgba(0,217,255,0.2)',
+        boxShadow: '0 25px 60px rgba(0,0,0,0.6), 0 0 40px rgba(0,217,255,0.06)',
+      }}
+    >
+      {/* Title bar */}
+      <div className="flex items-center gap-2 px-4 py-3 border-b border-white/5"
+        style={{ background: 'rgba(255,255,255,0.03)' }}>
+        <div className="w-3 h-3 rounded-full bg-red-500/80" />
+        <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
+        <div className="w-3 h-3 rounded-full bg-green-500/80" />
+        <span className="ml-3 text-xs text-gray-500 font-mono">abdullah@ai-dev ~ brain-tumor-detector</span>
         <motion.div
-          className="absolute inset-0 rounded-2xl pointer-events-none"
-          style={{
-            background: `radial-gradient(circle at ${glowX}% ${glowY}%, rgba(0,217,255,0.12), transparent 60%)`,
-          }}
+          className="ml-auto w-2 h-2 rounded-full bg-green-400"
+          animate={{ opacity: [1, 0.3, 1] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
         />
+      </div>
 
-        {/* Scan line */}
-        <motion.div
-          className="absolute left-0 right-0 h-px pointer-events-none"
-          style={{ background: 'linear-gradient(90deg, transparent, #00d9ff, transparent)' }}
-          animate={{ top: ['10%', '90%', '10%'] }}
-          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-        />
-
-        {/* Content */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3" style={{ transform: 'translateZ(30px)' }}>
-          <motion.div
-            className="text-5xl"
-            animate={{ rotateY: [0, 360] }}
-            transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
-          >
-            🤖
-          </motion.div>
-          <div className="text-center">
-            <div className="text-neon-blue font-bold text-lg">Abdullah Javid</div>
-            <div className="text-gray-400 text-sm">AI Developer</div>
-          </div>
-          {/* Animated ring */}
-          <motion.div
-            className="w-16 h-16 rounded-full absolute"
-            style={{ border: '1px solid rgba(0,217,255,0.2)' }}
-            animate={{ scale: [1, 1.4, 1], opacity: [0.4, 0, 0.4] }}
-            transition={{ duration: 2, repeat: Infinity }}
-          />
-        </div>
-
-        {/* Corner accents */}
-        {[
-          'top-2 left-2 border-t border-l',
-          'top-2 right-2 border-t border-r',
-          'bottom-2 left-2 border-b border-l',
-          'bottom-2 right-2 border-b border-r',
-        ].map((cls, i) => (
-          <div key={i} className={`absolute w-4 h-4 ${cls}`} style={{ borderColor: '#00d9ff60' }} />
+      {/* Terminal body */}
+      <div className="p-4 space-y-0.5 min-h-[280px]">
+        {TERMINAL_LINES.map((line, i) => (
+          <TerminalLine key={i} line={line} startTyping={started} />
         ))}
-      </motion.div>
+      </div>
 
-      {/* Orbiting dot */}
+      {/* Scan line */}
       <motion.div
-        className="absolute w-3 h-3 rounded-full pointer-events-none"
-        style={{
-          background: '#00d9ff',
-          boxShadow: '0 0 12px #00d9ff',
-          top: '50%', left: '50%',
-        }}
-        animate={{ rotate: 360 }}
+        className="absolute left-0 right-0 h-px pointer-events-none"
+        style={{ background: 'linear-gradient(90deg, transparent, rgba(0,217,255,0.15), transparent)' }}
+        animate={{ top: ['0%', '100%'] }}
         transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
-        transformTemplate={({ rotate }) =>
-          `translate(-50%, -50%) rotate(${rotate}) translateX(110px)`
-        }
       />
-      <motion.div
-        className="absolute w-2 h-2 rounded-full pointer-events-none"
-        style={{ background: '#ff006e', boxShadow: '0 0 10px #ff006e', top: '50%', left: '50%' }}
-        animate={{ rotate: -360 }}
-        transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
-        transformTemplate={({ rotate }) =>
-          `translate(-50%, -50%) rotate(${rotate}) translateX(140px)`
-        }
-      />
-    </div>
+
+      {/* Glow edge */}
+      <div className="absolute inset-x-0 bottom-0 h-16 pointer-events-none"
+        style={{ background: 'linear-gradient(to top, rgba(0,217,255,0.04), transparent)' }} />
+    </motion.div>
   )
 }
 
@@ -173,7 +148,6 @@ export default function About() {
               Before UMT, I completed FSc Pre-Engineering from Punjab Group of Colleges (2023–2025) — Mathematics, Physics, and Computer Science.
             </p>
 
-            {/* Stat grid */}
             <div className="grid grid-cols-2 gap-4 pt-4">
               {[
                 { n: '20+', l: 'Platforms', c: '#00d9ff' },
@@ -191,28 +165,22 @@ export default function About() {
                   style={{
                     background: `linear-gradient(135deg, ${s.c}12, ${s.c}04)`,
                     border: `1px solid ${s.c}30`,
-                    boxShadow: `0 4px 20px ${s.c}10`,
                   }}
                 >
-                  <motion.div
-                    className="absolute inset-0 opacity-0"
-                    style={{ background: `radial-gradient(circle at 50% 0%, ${s.c}15, transparent)` }}
-                    whileHover={{ opacity: 1 }}
-                  />
-                  <div className="text-2xl font-bold font-mono relative z-10" style={{ color: s.c, textShadow: `0 0 20px ${s.c}` }}>{s.n}</div>
-                  <div className="text-xs text-gray-400 relative z-10 mt-1">{s.l}</div>
+                  <div className="text-2xl font-bold font-mono" style={{ color: s.c, textShadow: `0 0 20px ${s.c}` }}>{s.n}</div>
+                  <div className="text-xs text-gray-400 mt-1">{s.l}</div>
                 </motion.div>
               ))}
             </div>
           </motion.div>
 
-          {/* 3D Holographic Card */}
+          {/* Live Terminal */}
           <motion.div
             initial={{ opacity: 0, x: 40 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
           >
-            <HolographicCard />
+            <LiveTerminal />
           </motion.div>
         </div>
       </div>

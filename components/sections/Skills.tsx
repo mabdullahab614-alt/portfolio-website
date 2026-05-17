@@ -1,7 +1,7 @@
 'use client'
 
-import { motion, useInView } from 'framer-motion'
-import { useRef } from 'react'
+import { motion, useInView, useAnimationFrame } from 'framer-motion'
+import { useRef, useState } from 'react'
 import {
   FaPython, FaDatabase, FaGitAlt, FaCloud, FaHtml5,
 } from 'react-icons/fa'
@@ -9,6 +9,131 @@ import {
   SiTypescript, SiNextdotjs, SiTailwindcss,
   SiCplusplus, SiJavascript,
 } from 'react-icons/si'
+
+const GLOBE_NODES = [
+  { label: 'Hugging Face', color: '#9d4edd', lat: 20, lng: 30 },
+  { label: 'GitHub Pages', color: '#00d9ff', lat: 50, lng: 120 },
+  { label: 'Vercel', color: '#00ff88', lat: -20, lng: -60 },
+  { label: 'itch.io', color: '#ff006e', lat: 35, lng: -100 },
+  { label: 'Firebase', color: '#ffaa00', lat: -40, lng: 150 },
+  { label: 'AWS', color: '#00d9ff', lat: 10, lng: -30 },
+  { label: 'Gradio', color: '#ff006e', lat: 60, lng: 80 },
+  { label: 'Streamlit', color: '#00ff88', lat: -10, lng: 60 },
+]
+
+function DeployGlobe() {
+  const [rot, setRot] = useState(0)
+  useAnimationFrame((_, delta) => setRot(r => r + delta * 0.02))
+
+  const toXY = (lat: number, lng: number, r: number, rotDeg: number) => {
+    const latR = (lat * Math.PI) / 180
+    const lngR = ((lng + rotDeg) * Math.PI) / 180
+    const x = r * Math.cos(latR) * Math.sin(lngR)
+    const y = -r * Math.sin(latR)
+    const z = r * Math.cos(latR) * Math.cos(lngR)
+    return { x, y, z }
+  }
+
+  const R = 110
+  const cx = 140, cy = 140
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.8 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.8 }}
+      className="relative mx-auto"
+      style={{ width: 280, height: 280 }}
+    >
+      <svg width="280" height="280" className="absolute inset-0">
+        <defs>
+          <radialGradient id="globeGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="rgba(0,217,255,0.08)" />
+            <stop offset="100%" stopColor="rgba(0,217,255,0)" />
+          </radialGradient>
+          <filter id="nodeGlow">
+            <feGaussianBlur stdDeviation="2" result="blur" />
+            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+          </filter>
+        </defs>
+
+        {/* Globe sphere */}
+        <circle cx={cx} cy={cy} r={R} fill="url(#globeGrad)" stroke="rgba(0,217,255,0.15)" strokeWidth="1" />
+
+        {/* Latitude lines */}
+        {[-60, -30, 0, 30, 60].map((lat, i) => {
+          const latR = (lat * Math.PI) / 180
+          const ry2 = R * Math.cos(latR)
+          const yOff = -R * Math.sin(latR)
+          return (
+            <ellipse key={i} cx={cx} cy={cy + yOff} rx={ry2} ry={ry2 * 0.15}
+              fill="none" stroke="rgba(0,217,255,0.08)" strokeWidth="0.5" />
+          )
+        })}
+
+        {/* Longitude lines */}
+        {[0, 45, 90, 135].map((lng, i) => {
+          const a = ((lng + rot) * Math.PI) / 180
+          const x1 = cx + R * Math.sin(a)
+          const x2 = cx - R * Math.sin(a)
+          return (
+            <line key={i} x1={x1} y1={cy - R} x2={x2} y2={cy + R}
+              stroke="rgba(0,217,255,0.06)" strokeWidth="0.5" />
+          )
+        })}
+
+        {/* Deployment nodes */}
+        {GLOBE_NODES.map((node, i) => {
+          const { x, y, z } = toXY(node.lat, node.lng, R, rot)
+          const visible = z > -20
+          if (!visible) return null
+          const opacity = Math.max(0, (z + R) / (2 * R))
+          const nx = cx + x, ny = cy + y
+          const size = 4 + (z / R) * 3
+          return (
+            <g key={i} filter="url(#nodeGlow)">
+              <circle cx={nx} cy={ny} r={size + 4} fill={node.color} fillOpacity={opacity * 0.15} />
+              <circle cx={nx} cy={ny} r={size} fill={node.color} fillOpacity={opacity * 0.9} />
+            </g>
+          )
+        })}
+
+        {/* Equator highlight */}
+        <ellipse cx={cx} cy={cy} rx={R} ry={R * 0.15}
+          fill="none" stroke="rgba(0,217,255,0.2)" strokeWidth="1" />
+      </svg>
+
+      {/* Node labels */}
+      {GLOBE_NODES.map((node, i) => {
+        const { x, y, z } = toXY(node.lat, node.lng, R, rot)
+        if (z < 10) return null
+        const opacity = (z / R) * 0.9
+        return (
+          <div key={i} className="absolute pointer-events-none text-xs font-mono font-bold"
+            style={{
+              left: cx + x + 8, top: cy + y - 6,
+              color: node.color, opacity,
+              textShadow: `0 0 8px ${node.color}`,
+              transform: 'translate(0, -50%)',
+              whiteSpace: 'nowrap',
+              fontSize: 10,
+            }}>
+            {node.label}
+          </div>
+        )
+      })}
+
+      {/* Center glow */}
+      <div className="absolute inset-0 rounded-full pointer-events-none"
+        style={{ background: 'radial-gradient(circle at 45% 40%, rgba(0,217,255,0.06), transparent 60%)' }} />
+
+      {/* Label */}
+      <div className="absolute bottom-0 left-0 right-0 text-center text-xs font-mono text-gray-500">
+        20+ global deployments · live
+      </div>
+    </motion.div>
+  )
+}
 
 const skills = [
   { name: 'Python', icon: FaPython, color: '#3776ab', level: 90 },
@@ -173,13 +298,14 @@ export default function Skills() {
           </div>
         </div>
 
-        {/* Floating Platform Badges */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <h3 className="text-xl font-bold mb-6 text-white">Platforms & Ecosystems</h3>
+        {/* Globe + Platforms */}
+        <div className="grid lg:grid-cols-2 gap-12 items-center mb-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <h3 className="text-xl font-bold mb-6 text-white">Platforms & Ecosystems</h3>
           <div className="flex flex-wrap gap-3">
             {platforms.map((p, i) => (
               <motion.span
@@ -207,7 +333,21 @@ export default function Skills() {
               </motion.span>
             ))}
           </div>
-        </motion.div>
+          </motion.div>
+
+          {/* 3D Globe */}
+          <motion.div
+            initial={{ opacity: 0, x: 40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="flex flex-col items-center gap-3"
+          >
+            <div className="text-sm font-mono text-gray-500 mb-2 text-center">
+              🌍 Live deployments worldwide
+            </div>
+            <DeployGlobe />
+          </motion.div>
+        </div>
       </div>
     </section>
   )
