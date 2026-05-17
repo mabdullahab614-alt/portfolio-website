@@ -1,8 +1,67 @@
 'use client'
 
-import { motion, useMotionValue, useSpring, useTransform, useMotionTemplate } from 'framer-motion'
+import { motion, useMotionValue, useSpring, useTransform, useMotionTemplate, useInView } from 'framer-motion'
 import { FaGithub, FaExternalLinkAlt } from 'react-icons/fa'
-import { useRef } from 'react'
+import { useRef, useEffect, useState } from 'react'
+
+function CountUp({ target, suffix = '', decimals = 0, inView }: { target: number; suffix?: string; decimals?: number; inView: boolean }) {
+  const [val, setVal] = useState(0)
+  useEffect(() => {
+    if (!inView) return
+    let i = 0; const steps = 50
+    const id = setInterval(() => {
+      i++; setVal(parseFloat(((target / steps) * i).toFixed(decimals)))
+      if (i >= steps) { setVal(target); clearInterval(id) }
+    }, 30)
+    return () => clearInterval(id)
+  }, [inView, target, decimals])
+  return <>{decimals > 0 ? val.toFixed(decimals) : val}{suffix}</>
+}
+
+const PROJECT_STATS: Record<string, { label: string; value: number; suffix: string; decimals?: number }[]> = {
+  'Brain Tumor Detector': [
+    { label: 'Val Accuracy', value: 92.2, suffix: '%', decimals: 1 },
+    { label: 'MRI Scans', value: 7200, suffix: '' },
+    { label: 'Inference', value: 2, suffix: 's' },
+  ],
+  'Skin Disease Detector': [
+    { label: 'Accuracy', value: 71.8, suffix: '%', decimals: 1 },
+    { label: 'Conditions', value: 9, suffix: '' },
+  ],
+  'Nexus AI Assistant': [
+    { label: 'LLMs', value: 4, suffix: '' },
+    { label: 'Languages', value: 10, suffix: '' },
+    { label: 'Personas', value: 5, suffix: '' },
+  ],
+  'Animal Detector': [
+    { label: 'Species', value: 10, suffix: '' },
+    { label: 'Real-time', value: 30, suffix: 'fps' },
+  ],
+  'Air Writer': [
+    { label: 'FPS', value: 30, suffix: '' },
+    { label: 'Hand Points', value: 21, suffix: '' },
+  ],
+  'Tablet Defect Inspector': [
+    { label: 'Train Images', value: 959, suffix: '' },
+    { label: 'Classes', value: 2, suffix: '' },
+  ],
+  'ChessMaster': [
+    { label: 'Openings', value: 20, suffix: '+' },
+    { label: 'Depth', value: 6, suffix: ' ply' },
+  ],
+  'Galactic Defender: Absolute Zero': [
+    { label: 'Enemy Types', value: 3, suffix: '' },
+    { label: 'Boss Phases', value: 2, suffix: '' },
+  ],
+  'Snake Strike': [
+    { label: 'Difficulties', value: 3, suffix: '' },
+    { label: 'Dependencies', value: 0, suffix: '' },
+  ],
+  'Portfolio Website': [
+    { label: 'Sections', value: 8, suffix: '' },
+    { label: 'Animations', value: 20, suffix: '+' },
+  ],
+}
 
 const ICONS: Record<string, string> = {
   'Nexus AI Assistant': '🤖',
@@ -157,6 +216,8 @@ const projects = [
 ]
 
 function ProjectCard({ project, index }: { project: typeof projects[0]; index: number }) {
+  const statsRef = useRef(null)
+  const statsInView = useInView(statsRef, { once: true })
   const ref = useRef<HTMLDivElement>(null)
   const x = useMotionValue(0)
   const y = useMotionValue(0)
@@ -232,9 +293,30 @@ function ProjectCard({ project, index }: { project: typeof projects[0]; index: n
           </h3>
         </div>
 
-        <p className="text-gray-400 mb-5 flex-grow text-sm leading-relaxed relative z-10">
+        <p className="text-gray-400 mb-4 flex-grow text-sm leading-relaxed relative z-10">
           {project.description}
         </p>
+
+        {/* Live stat counters */}
+        {PROJECT_STATS[project.title] && (
+          <div ref={statsRef} className="flex gap-3 mb-4 relative z-10 flex-wrap">
+            {PROJECT_STATS[project.title].map((stat, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={statsInView ? { opacity: 1, scale: 1 } : {}}
+                transition={{ delay: i * 0.1 + 0.2 }}
+                className="flex-1 min-w-[60px] text-center rounded-lg py-1.5 px-2"
+                style={{ background: `${color}10`, border: `1px solid ${color}20` }}
+              >
+                <div className="text-base font-black font-mono" style={{ color, textShadow: `0 0 10px ${color}` }}>
+                  <CountUp target={stat.value} suffix={stat.suffix} decimals={stat.decimals ?? 0} inView={statsInView} />
+                </div>
+                <div className="text-xs text-gray-500 mt-0.5">{stat.label}</div>
+              </motion.div>
+            ))}
+          </div>
+        )}
 
         <div className="flex flex-wrap gap-2 mb-6 relative z-10">
           {project.tags.map((tag, i) => (
