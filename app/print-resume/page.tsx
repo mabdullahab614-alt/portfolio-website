@@ -3,10 +3,10 @@
 import { useEffect } from 'react'
 
 const contact = [
-  { label: '📧', value: 'mabdullah.ab614@gmail.com' },
-  { label: '🔗', value: 'linkedin.com/in/abdullah-javid-b217a2384' },
-  { label: '💻', value: 'github.com/mabdullahab614-alt' },
-  { label: '📍', value: 'Lahore, Pakistan' },
+  { icon: '✉', label: 'mabdullah.ab614@gmail.com' },
+  { icon: '🔗', label: 'linkedin.com/in/abdullah-javid-b217a2384' },
+  { icon: '⌨', label: 'github.com/mabdullahab614-alt' },
+  { icon: '📍', label: 'Lahore, Pakistan' },
 ]
 
 const education = [
@@ -16,9 +16,8 @@ const education = [
     period: 'Sep 2025 – Present',
     gpa: 'CGPA: 3.64 / 4.0 (1st Semester)',
     highlights: [
-      'Currently in 2nd Semester',
+      'Currently in 2nd Semester — strong in Mathematics, ML & Data Structures',
       'Certificate: 360 Transformation Boot Camp 2025 — UMT',
-      'Strong foundation in Mathematics, ML & Data Structures',
     ],
   },
   {
@@ -28,7 +27,7 @@ const education = [
     gpa: 'Score: 1043 / 1200',
     highlights: [
       'Subjects: Mathematics, Physics, Computer Science',
-      'Strong analytical and calculation skills',
+      'Excellent analytical and calculation skills',
     ],
   },
 ]
@@ -39,11 +38,11 @@ const experience = [
     org: 'Self-Employed / Open Source',
     period: '2024 – Present',
     points: [
-      'Built and deployed 10+ production AI models on Hugging Face Spaces used by real users worldwide',
+      'Built and deployed 10+ production AI models on Hugging Face Spaces with global users',
       'Achieved 92.2% validation accuracy on Brain Tumor MRI classifier (7,200 scans, ResNet18 + PyTorch)',
       'Developed Nexus AI — multi-model hub with 4 LLMs (LLaMA, Mixtral, Gemma) powered by Groq API',
       'Built Air Writer: real-time hand gesture drawing app using MediaPipe at 30fps via browser webcam',
-      'Deployed games on itch.io and GitHub Pages with Web Audio API and zero external dependencies',
+      'Deployed arcade games on itch.io and GitHub Pages with Web Audio API and zero dependencies',
     ],
   },
   {
@@ -51,7 +50,7 @@ const experience = [
     org: 'Portfolio Projects',
     period: '2024 – Present',
     points: [
-      'Built portfolio website with Next.js 15, Framer Motion 3D animations, Tailwind CSS, deployed on Vercel',
+      'Built portfolio with Next.js 15, Framer Motion 3D animations, Tailwind CSS, deployed on Vercel',
       'Created ChessMaster — browser chess engine with Minimax + Alpha-Beta Pruning AI and ELO tracking',
       'Integrated static export pipelines for global CDN delivery across 20+ platforms',
     ],
@@ -85,6 +84,11 @@ const achievements = [
   'Strong in Mathematics, Calculations, and Analytical Problem Solving',
 ]
 
+const blue = '#1d4ed8'
+const gray = '#374151'
+const lightGray = '#6b7280'
+const border = '#e5e7eb'
+
 export default function PrintResume() {
   useEffect(() => {
     document.title = 'Abdullah Javid — Resume'
@@ -94,161 +98,196 @@ export default function PrintResume() {
     <>
       <style>{`
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #fff; font-family: 'Segoe UI', Arial, sans-serif; color: #1a1a1a; }
+        html, body { background: #fff; color: #111; font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px; }
+
         @media print {
-          body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          html, body { background: #fff !important; }
           .no-print { display: none !important; }
-          @page { margin: 12mm 14mm; size: A4; }
+          @page {
+            size: A4;
+            margin: 10mm 12mm;
+            /* Remove browser header/footer (date, URL, page number) */
+          }
+          html {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+          }
         }
+
         @media screen {
-          body { max-width: 860px; margin: 0 auto; padding: 24px; }
+          body { max-width: 820px; margin: 0 auto; padding: 20px; }
+        }
+
+        .section-title {
+          font-size: 10px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          color: ${blue};
+          margin-bottom: 8px;
+          padding-bottom: 4px;
+          border-bottom: 1.5px solid ${blue};
+        }
+
+        .card {
+          padding: 8px 10px;
+          background: #f8fafc;
+          border-radius: 5px;
+          border-left: 3px solid ${blue};
+          margin-bottom: 6px;
+        }
+
+        .tag {
+          display: inline-block;
+          padding: 1px 7px;
+          background: #eff6ff;
+          border: 1px solid #bfdbfe;
+          border-radius: 999px;
+          font-size: 10px;
+          color: ${blue};
+          margin: 2px 2px 0 0;
         }
       `}</style>
 
-      {/* Print button - only visible on screen */}
-      <div className="no-print" style={{ textAlign: 'right', marginBottom: 16 }}>
+      {/* Screen-only print button */}
+      <div className="no-print" style={{ textAlign: 'center', padding: '16px 0 20px', borderBottom: '1px solid #e5e7eb', marginBottom: 20 }}>
+        <p style={{ color: lightGray, fontSize: 12, marginBottom: 10 }}>
+          Click below — then choose <strong>Save as PDF</strong> in the print dialog
+        </p>
         <button
           onClick={() => window.print()}
           style={{
-            background: 'linear-gradient(135deg, #00d9ff, #9d4edd)',
+            background: blue,
             color: '#fff',
             border: 'none',
-            padding: '10px 24px',
-            borderRadius: 8,
+            padding: '10px 28px',
+            borderRadius: 6,
             fontWeight: 700,
             fontSize: 14,
             cursor: 'pointer',
+            letterSpacing: 0.5,
           }}
         >
-          ⬇ Save / Print as PDF
+          ⬇ Save as PDF
         </button>
       </div>
 
-      {/* Resume content */}
-      <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 8, overflow: 'hidden' }}>
+      {/* ─── RESUME DOCUMENT ─── */}
+      <div style={{ background: '#fff', padding: 0 }}>
 
         {/* Header */}
-        <div style={{ background: '#0a0e27', padding: '28px 32px', borderTop: '3px solid #00d9ff' }}>
-          <h1 style={{ fontSize: 30, fontWeight: 900, color: '#fff', marginBottom: 4 }}>Abdullah Javid</h1>
-          <p style={{ fontSize: 13, color: '#00d9ff', fontFamily: 'monospace', marginBottom: 12 }}>
+        <div style={{ textAlign: 'center', paddingBottom: 14, marginBottom: 14, borderBottom: `2px solid ${blue}` }}>
+          <h1 style={{ fontSize: 28, fontWeight: 900, color: '#111', letterSpacing: -0.5, marginBottom: 4 }}>
+            Abdullah Javid
+          </h1>
+          <p style={{ fontSize: 12, color: blue, fontWeight: 600, marginBottom: 10 }}>
             AI Developer · ML Engineer · Builder & Deployer
           </p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px 24px' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '4px 20px' }}>
             {contact.map((c, i) => (
-              <span key={i} style={{ fontSize: 11, color: '#9ca3af', fontFamily: 'monospace' }}>
-                {c.label} {c.value}
+              <span key={i} style={{ fontSize: 11, color: gray }}>
+                {c.icon} {c.label}
               </span>
             ))}
           </div>
         </div>
 
-        <div style={{ padding: '24px 32px' }}>
+        {/* Two-column layout */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 220px', gap: 20 }}>
 
-          {/* Education */}
-          <div style={{ marginBottom: 22 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-              <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, color: '#00d9ff', fontFamily: 'monospace' }}>Education</span>
-              <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, #00d9ff40, transparent)' }} />
-            </div>
-            {education.map((e, i) => (
-              <div key={i} style={{ marginBottom: 12, paddingLeft: 12, borderLeft: '2px solid #00d9ff40' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 4 }}>
-                  <div>
-                    <div style={{ fontWeight: 700, fontSize: 13, color: '#111' }}>{e.degree}</div>
-                    <div style={{ fontSize: 12, color: '#6b7280' }}>{e.institution}</div>
-                  </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontSize: 11, color: '#9ca3af', fontFamily: 'monospace' }}>{e.period}</div>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: '#00d9ff', fontFamily: 'monospace' }}>{e.gpa}</div>
-                  </div>
-                </div>
-                <ul style={{ marginTop: 4, paddingLeft: 0, listStyle: 'none' }}>
-                  {e.highlights.map((h, j) => (
-                    <li key={j} style={{ fontSize: 11.5, color: '#4b5563', marginTop: 2 }}>▸ {h}</li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-
-          {/* Experience */}
-          <div style={{ marginBottom: 22 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-              <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, color: '#9d4edd', fontFamily: 'monospace' }}>Experience</span>
-              <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, #9d4edd40, transparent)' }} />
-            </div>
-            {experience.map((e, i) => (
-              <div key={i} style={{ marginBottom: 12, paddingLeft: 12, borderLeft: '2px solid #9d4edd40' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 4, marginBottom: 4 }}>
-                  <div>
-                    <div style={{ fontWeight: 700, fontSize: 13, color: '#111' }}>{e.role}</div>
-                    <div style={{ fontSize: 12, color: '#9d4edd' }}>{e.org}</div>
-                  </div>
-                  <div style={{ fontSize: 11, color: '#9ca3af', fontFamily: 'monospace' }}>{e.period}</div>
-                </div>
-                <ul style={{ paddingLeft: 0, listStyle: 'none' }}>
-                  {e.points.map((p, j) => (
-                    <li key={j} style={{ fontSize: 11.5, color: '#4b5563', marginTop: 2 }}>▸ {p}</li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-
-          {/* Projects */}
-          <div style={{ marginBottom: 22 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-              <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, color: '#ff006e', fontFamily: 'monospace' }}>Key Projects</span>
-              <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, #ff006e40, transparent)' }} />
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 16px' }}>
-              {projects.map((p, i) => (
-                <div key={i} style={{ padding: '6px 10px', background: '#f9fafb', borderRadius: 6, borderLeft: '2px solid #ff006e40' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
-                    <span style={{ fontWeight: 700, fontSize: 12, color: '#111' }}>{p.name}</span>
-                    <span style={{ fontSize: 11, color: '#ff006e', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>{p.stat}</span>
-                  </div>
-                  <div style={{ fontSize: 10.5, color: '#9ca3af', fontFamily: 'monospace', marginTop: 1 }}>{p.tech}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Skills */}
-          <div style={{ marginBottom: 22 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-              <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, color: '#00ff88', fontFamily: 'monospace' }}>Technical Skills</span>
-              <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, #00ff8840, transparent)' }} />
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '5px 20px' }}>
-              {skills.map((s, i) => (
-                <div key={i} style={{ fontSize: 11.5, color: '#374151' }}>
-                  <span style={{ fontWeight: 700, color: '#111' }}>{s.label}: </span>
-                  {s.items}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Achievements */}
+          {/* LEFT COLUMN */}
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-              <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, color: '#ffaa00', fontFamily: 'monospace' }}>Achievements & Certifications</span>
-              <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, #ffaa0040, transparent)' }} />
-            </div>
-            <ul style={{ paddingLeft: 0, listStyle: 'none' }}>
-              {achievements.map((a, i) => (
-                <li key={i} style={{ fontSize: 11.5, color: '#4b5563', marginBottom: 3 }}>🏆 {a}</li>
+
+            {/* Education */}
+            <div style={{ marginBottom: 16 }}>
+              <div className="section-title">Education</div>
+              {education.map((e, i) => (
+                <div key={i} className="card">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', marginBottom: 2 }}>
+                    <span style={{ fontWeight: 700, fontSize: 12, color: '#111' }}>{e.degree}</span>
+                    <span style={{ fontSize: 10.5, color: blue, fontWeight: 600 }}>{e.gpa}</span>
+                  </div>
+                  <div style={{ fontSize: 11, color: lightGray, marginBottom: 4 }}>
+                    {e.institution} &nbsp;·&nbsp; {e.period}
+                  </div>
+                  {e.highlights.map((h, j) => (
+                    <div key={j} style={{ fontSize: 11, color: gray }}>▸ {h}</div>
+                  ))}
+                </div>
               ))}
-            </ul>
+            </div>
+
+            {/* Experience */}
+            <div style={{ marginBottom: 16 }}>
+              <div className="section-title">Experience</div>
+              {experience.map((e, i) => (
+                <div key={i} className="card">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', marginBottom: 2 }}>
+                    <span style={{ fontWeight: 700, fontSize: 12, color: '#111' }}>{e.role}</span>
+                    <span style={{ fontSize: 10.5, color: lightGray }}>{e.period}</span>
+                  </div>
+                  <div style={{ fontSize: 11, color: blue, fontWeight: 600, marginBottom: 4 }}>{e.org}</div>
+                  {e.points.map((p, j) => (
+                    <div key={j} style={{ fontSize: 11, color: gray, marginBottom: 2 }}>▸ {p}</div>
+                  ))}
+                </div>
+              ))}
+            </div>
+
+            {/* Projects */}
+            <div>
+              <div className="section-title">Key Projects</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 5 }}>
+                {projects.map((p, i) => (
+                  <div key={i} style={{ padding: '6px 8px', background: '#f8fafc', borderRadius: 5, borderLeft: `2px solid #bfdbfe` }}>
+                    <div style={{ fontWeight: 700, fontSize: 11, color: '#111' }}>{p.name}</div>
+                    <div style={{ fontSize: 10.5, color: blue, fontWeight: 600 }}>{p.stat}</div>
+                    <div style={{ fontSize: 10, color: lightGray }}>{p.tech}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
 
+          {/* RIGHT COLUMN */}
+          <div>
+
+            {/* Skills */}
+            <div style={{ marginBottom: 16 }}>
+              <div className="section-title">Technical Skills</div>
+              {skills.map((s, i) => (
+                <div key={i} style={{ marginBottom: 8 }}>
+                  <div style={{ fontSize: 10.5, fontWeight: 700, color: '#111', marginBottom: 3 }}>{s.label}</div>
+                  <div>
+                    {s.items.split(' · ').map((item, j) => (
+                      <span key={j} className="tag">{item}</span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Achievements */}
+            <div>
+              <div className="section-title">Achievements</div>
+              {achievements.map((a, i) => (
+                <div key={i} style={{
+                  fontSize: 10.5, color: gray, marginBottom: 6,
+                  padding: '5px 8px', background: '#f8fafc',
+                  borderRadius: 4, borderLeft: `2px solid #bfdbfe`
+                }}>
+                  {a}
+                </div>
+              ))}
+            </div>
+
+          </div>
         </div>
 
         {/* Footer */}
-        <div style={{ padding: '10px 32px', borderTop: '1px solid #f3f4f6', background: '#fafafa', display: 'flex', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: 10, color: '#9ca3af', fontFamily: 'monospace' }}>Abdullah Javid · AI Developer · Lahore, Pakistan · 2025</span>
-          <span style={{ fontSize: 10, color: '#9ca3af', fontFamily: 'monospace' }}>github.com/mabdullahab614-alt</span>
+        <div style={{ marginTop: 16, paddingTop: 8, borderTop: `1px solid ${border}`, display: 'flex', justifyContent: 'space-between' }}>
+          <span style={{ fontSize: 9.5, color: '#9ca3af' }}>Abdullah Javid · AI Developer · Lahore, Pakistan</span>
+          <span style={{ fontSize: 9.5, color: '#9ca3af' }}>github.com/mabdullahab614-alt · mabdullah.ab614@gmail.com</span>
         </div>
       </div>
     </>
