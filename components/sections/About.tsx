@@ -48,7 +48,12 @@ function HolographicCard() {
       {/* Main 3D Card */}
       <motion.div
         ref={ref}
-        style={{ rotateX: rx, rotateY: ry, transformStyle: 'preserve-3d', perspective: 1000 }}
+        style={{
+          rotateX: rx, rotateY: ry, transformStyle: 'preserve-3d', perspective: 1000,
+          background: 'linear-gradient(135deg, rgba(0,217,255,0.12), rgba(157,78,221,0.08))',
+          border: '1px solid rgba(0,217,255,0.25)',
+          boxShadow: '0 25px 80px rgba(0,0,0,0.5), 0 0 60px rgba(0,217,255,0.1)',
+        }}
         onMouseMove={e => {
           const r = ref.current?.getBoundingClientRect()
           if (!r) return
@@ -57,11 +62,6 @@ function HolographicCard() {
         }}
         onMouseLeave={() => { x.set(0); y.set(0) }}
         className="relative w-56 h-56 rounded-2xl cursor-pointer"
-        style={{
-          background: 'linear-gradient(135deg, rgba(0,217,255,0.12), rgba(157,78,221,0.08))',
-          border: '1px solid rgba(0,217,255,0.25)',
-          boxShadow: '0 25px 80px rgba(0,0,0,0.5), 0 0 60px rgba(0,217,255,0.1)',
-        }}
       >
         {/* Spotlight */}
         <motion.div

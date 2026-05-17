@@ -87,7 +87,15 @@ function StepCard({ step, index, active, onClick }: {
       initial={{ opacity: 0, y: 50, scale: 0.9 }}
       animate={inView ? { opacity: 1, y: 0, scale: 1 } : {}}
       transition={{ duration: 0.6, delay: index * 0.12, ease: 'easeOut' }}
-      style={{ rotateX: rx, rotateY: ry, transformStyle: 'preserve-3d', perspective: 800 }}
+      style={{
+        rotateX: rx, rotateY: ry, transformStyle: 'preserve-3d', perspective: 800,
+        background: active
+          ? `linear-gradient(135deg, ${step.color}20, ${step.color}08)`
+          : 'linear-gradient(135deg, rgba(26,31,58,0.9), rgba(10,14,39,0.95))',
+        border: `1px solid ${active ? step.color + '60' : 'rgba(255,255,255,0.06)'}`,
+        boxShadow: active ? `0 0 40px ${step.color}25, 0 20px 60px rgba(0,0,0,0.3)` : '0 4px 24px rgba(0,0,0,0.3)',
+        transition: 'background 0.3s, border-color 0.3s, box-shadow 0.3s',
+      }}
       onMouseMove={e => {
         const r = (e.currentTarget as HTMLElement).getBoundingClientRect()
         x.set((e.clientX - r.left) / r.width - 0.5)
@@ -96,14 +104,6 @@ function StepCard({ step, index, active, onClick }: {
       onMouseLeave={() => { x.set(0); y.set(0) }}
       onClick={onClick}
       className="cursor-pointer relative rounded-2xl p-6 flex flex-col gap-3 select-none"
-      style={{
-        background: active
-          ? `linear-gradient(135deg, ${step.color}20, ${step.color}08)`
-          : 'linear-gradient(135deg, rgba(26,31,58,0.9), rgba(10,14,39,0.95))',
-        border: `1px solid ${active ? step.color + '60' : 'rgba(255,255,255,0.06)'}`,
-        boxShadow: active ? `0 0 40px ${step.color}25, 0 20px 60px rgba(0,0,0,0.3)` : '0 4px 24px rgba(0,0,0,0.3)',
-        transition: 'background 0.3s, border-color 0.3s, box-shadow 0.3s',
-      }}
     >
       {/* Step number + icon */}
       <div className="flex items-center gap-3">
