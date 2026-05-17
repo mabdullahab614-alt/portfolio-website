@@ -5,6 +5,7 @@ import Navbar from '@/components/Navbar'
 import Hero from '@/components/sections/Hero'
 import About from '@/components/sections/About'
 import Skills from '@/components/sections/Skills'
+import AIProcess from '@/components/sections/AIProcess'
 import Projects from '@/components/sections/Projects'
 import Education from '@/components/sections/Education'
 import Resume from '@/components/sections/Resume'
@@ -20,6 +21,7 @@ export default function Home() {
       <Hero />
       <About />
       <Skills />
+      <AIProcess />
       <Projects />
       <Education />
       <Resume />
