@@ -171,11 +171,20 @@ export default function Contact() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSending(true)
-    await new Promise(r => setTimeout(r, 1200))
-    setSending(false)
-    setSubmitted(true)
-    setFormData({ name: '', email: '', message: '' })
-    setTimeout(() => setSubmitted(false), 4000)
+    try {
+      const res = await fetch('https://formspree.io/f/mojbapny', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(formData),
+      })
+      if (res.ok) {
+        setSubmitted(true)
+        setFormData({ name: '', email: '', message: '' })
+        setTimeout(() => setSubmitted(false), 5000)
+      }
+    } finally {
+      setSending(false)
+    }
   }
 
   return (
