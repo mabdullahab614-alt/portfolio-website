@@ -99,8 +99,9 @@ export default function Resume() {
 
         {/* Download button */}
         <motion.a
-          href="/Abdullah_Javid_CV.pdf"
-          download
+          href="/print-resume"
+          target="_blank"
+          rel="noreferrer"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
@@ -122,7 +123,7 @@ export default function Resume() {
           transition={{ delay: 0.5 }}
           className="text-gray-600 text-xs font-mono mt-4"
         >
-          PDF includes full education, experience, projects, skills & certifications
+          Opens resume → click "Save / Print as PDF" to download
         </motion.p>
       </div>
     </section>
